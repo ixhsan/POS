@@ -8,7 +8,7 @@
       <!-- Sidebar - Brand -->
       <a
         class="sidebar-brand d-flex align-items-center justify-content-center"
-        href="/"
+        href="<%= user.role == 'admin' ? '/dashboard' : '/sales' %>"
       >
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
@@ -22,7 +22,7 @@
       <% if (user.role == 'admin') {%>
       <!-- Nav Item - Dashboard -->
       <li class="nav-item <%= active === `dashboard` ? `active`: `` %>">
-        <a class="nav-link" href="/">
+        <a class="nav-link" href="/dashboard">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span></a
         >
@@ -92,19 +92,19 @@
       <!-- Heading -->
       <div class="sidebar-heading">Transactions</div>
 
-      <!-- Nav Item - Charts -->
-      <li class="nav-item <%= active === `sales` ? `active`: `` %>">
-        <a class="nav-link" href="/sales">
-          <i class="fas fa-fw fa-chart-area"></i>
-          <span>Sales</span></a
-        >
-      </li>
-
       <!-- Nav Item - Tables -->
       <li class="nav-item <%= active === `purchases` ? `active`: `` %>">
         <a class="nav-link" href="/purchases">
           <i class="fas fa-fw fa-table"></i>
           <span>Purchases</span></a
+        >
+      </li>
+
+      <!-- Nav Item - Charts -->
+      <li class="nav-item <%= active === `sales` ? `active`: `` %>">
+        <a class="nav-link" href="/sales">
+          <i class="fas fa-fw fa-chart-area"></i>
+          <span>Sales</span></a
         >
       </li>
 

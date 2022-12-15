@@ -3,8 +3,23 @@ var router = express.Router();
 const { isAdmin } = require("../helpers/util");
 
 module.exports = function (db) {
+
   router
     .route("/")
+    .get(isAdmin, async function (req, res) {
+      try {
+        // let sql = `SELECT "userid", "email", "name", "password", "role" FROM users ORDER BY "userid" ASC`;
+        res.render("index", {
+          user: req.session.user,
+          active: `dashboard`,
+        });
+      } catch (error) {
+        res.send("error");
+      }
+    });
+  
+  router
+    .route("/stats")
     /* HOMEPAGE - DASHBOARD */
     .get(isAdmin, async function (req, res) {
       let sql;

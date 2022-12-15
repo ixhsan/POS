@@ -5,27 +5,10 @@ const { isLoggedIn } = require("../helpers/util");
 
 module.exports = function (db) {
   let sql
-  /* HOMEPAGE - DASHBOARD */
-  router.route("/").get(isLoggedIn, async function (req, res) {
-    try {
-      // let sql = `SELECT "userid", "email", "name", "password", "role" FROM users ORDER BY "userid" ASC`;
-      res.render("index", {
-        user: req.session.user,
-        active: `dashboard`,
-      });
-    } catch (error) {
-      res.send("error");
-    }
-  });
-
-  router.route("/logout").get(async function (req, res) {
-    await req.session.destroy();
-    res.redirect("/login");
-  });
-
-  /* LOGIN PAGE */
+  
   router
-    .route("/login")
+  .route("/")
+  /* LOGIN PAGE */
     .get(async function (req, res) {
       res.render("login", { error: req.flash(`error`) });
     })
@@ -37,7 +20,7 @@ module.exports = function (db) {
         const checkEmail = await db.query(sql, [email]);
         if (checkEmail.rows.length == 0) {
           req.flash(`error`, `Email not registered!`);
-          return res.redirect("/login");
+          return res.redirect("/");
         }
 
         const checkPassword = await bcrypt.compare(
@@ -46,7 +29,7 @@ module.exports = function (db) {
         );
         if (!checkPassword) {
           req.flash(`error`, `Wrong password!`);
-          return res.redirect("/login");
+          return res.redirect("/");
         }
 
         req.session.user = checkEmail.rows[0];
@@ -55,15 +38,20 @@ module.exports = function (db) {
           return res.redirect('/sales')
         }
 
-        res.redirect("/");
+        res.redirect("/dashboard");
       } catch (error) {
         res.send(error);
       }
     });
+  
+  router.route("/logout").get(async function (req, res) {
+    await req.session.destroy();
+    res.redirect("/");
+  });
 
-  /* REGISTRATION PAGE */
   router
-    .route("/register")
+  .route("/register")
+  /* REGISTRATION PAGE */
     .get(async function (req, res) {
       res.render("register", { error: req.flash(`error`) });
     })
@@ -90,7 +78,7 @@ module.exports = function (db) {
           role,
         ]);
 
-        res.redirect("/login");
+        res.redirect("/");
       } catch (error) {
         res.send(error);
       }
