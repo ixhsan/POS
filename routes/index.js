@@ -59,7 +59,7 @@ module.exports = function (db) {
       try {
         sql = `SELECT * FROM users where email = $1`;
         const { name, email, password } = req.body;
-        const role = "admin";
+        const role = "operator";
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
