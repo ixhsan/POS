@@ -1,0 +1,127 @@
+<%- include('../layouts/header') %> 
+<%- include('../layouts/nav') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Users</h1>
+        <!-- Form -->
+        <div id="users-section" class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 id="users-form-title" class="m-0 font-weight-bold text-primary">Form edit</h6>
+            </div>
+            <div class="card-body">
+                <form id="users-form" action="/users/data/<%= data.userid %>" method="POST" autocomplete="off">
+                    <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">Email</label>
+                    <div class="col-sm-10">
+                        <input data-email="" type="email" name="email" class="form-control" id="email" placeholder="Email" autocomplete="off" value="<%= data.email %>" required>
+                        <div id="email-valid" class="valid-feedback">
+                            Email address is available
+                        </div>
+                        <div id="email-invalid" class="invalid-feedback">
+                            Email address already exist.
+                        </div>
+                    </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="name" class="col-sm-2 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Name" value="<%= data.name %>" required>
+                        </div>
+                    </div>
+                    <fieldset class="form-group">
+                    <div class="row">
+                        <legend id="role" class="col-form-label col-sm-2 pt-0">Role</legend>
+                        <div class="col-sm-10">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" id="role1" value="operator" <%= data.role == 'operator' ? 'checked': '' %>>
+                            <label class="form-check-label" for="role1">
+                            Operator
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" id="role2" value="admin" <%= data.role == 'admin' ? 'checked': '' %>>
+                            <label class="form-check-label" for="role2">
+                            Admin
+                            </label>
+                        </div>
+                        </div>
+                    </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button id="save-btn" form="users-form" type="submit" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-database"></i>
+                    </span>
+                    <span class="text">Save</span>
+                </button>
+                <a
+              href="/users"
+              class="btn btn-warning btn-icon-split"
+              id="back-btn"
+            >
+              <span class="icon text-white-50">
+                <i class="fas fa-undo"></i>
+              </span>
+              <span class="text">Back</span>
+            </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End of Main Content -->
+
+<script>
+    $("document").ready(function () {
+        // Check if email already exists
+            $('#email').change(function() {
+                    const email = $(this).val()
+                    const emailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+                    const emailIsValid = emailFormat.test(email)
+                    
+                    if (email === $('input#email').attr('data-id')) {
+                        $('input#email').removeClass('is-invalid').addClass('is-valid')
+                        $('#email-valid').html('Email remain unchanged.')
+                    } else if (emailIsValid) {
+                        emailCheck(email)
+                    } else if (!email) {
+                    $('input#email').removeClass('is-valid').addClass('is-invalid')
+                    $('#email-invalid').html('Email is required.')
+                    } else {
+                        $('input#email').removeClass('is-valid').addClass('is-invalid')
+                        $('#email-invalid').html('Invalid format.')
+                    }
+                })
+
+                const emailCheck = (email) => {
+                    $.ajax({
+                            method: 'POST',
+                            url: `/users/data`,
+                            dataType: 'json',
+                            data: {
+                                email,
+                            }
+                        }).done(function(response) {
+                            console.log(response.data);
+                            if (response.data) {
+                                // Set input as valid
+                                $('input#email').removeClass('is-invalid').addClass('is-valid')
+                                $('#email-valid').html('Email address is available.')
+                            } else {
+                                // Set input as invalid
+                                $('input#email').removeClass('is-valid').addClass('is-invalid')
+                                $('#email-invalid').html('Email address already exist.')
+                            }
+                        }).fail(function(error) {
+                            alert('gagal bro')
+                        })
+                }
+    });
+  </script>
+
+<%- include('../layouts/footer') %> 

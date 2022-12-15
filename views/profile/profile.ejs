@@ -1,0 +1,129 @@
+<%- include('../layouts/header') %> 
+<%- include('../layouts/nav') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+  <% if (error.length > 0) { %>
+    <div class="btn btn-user btn-block alert alert-danger" role="alert"><%= error %></div>
+    <% } %>
+
+    <% if (success.length > 0) { %>
+      <div class="btn btn-user btn-block alert alert-success" role="alert"><%= success %></div>
+      <% } %>
+
+    <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Profile</h1>
+
+  <div id="profile-section" class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 id="profile-form-title" class="m-0 font-weight-bold text-primary">
+        Your Profile
+      </h6>
+    </div>
+    <div class="card-body">
+      <form id="profile-form" action="/profile/update/<%= user.userid %>" method="POST">
+        <div class="form-group row">
+          <label for="name" class="col-sm-2 col-form-label">Name</label>
+          <div class="col-sm-10">
+          <input
+              name="name"
+              type="text"
+              class="form-control"
+              id="name"
+              placeholder="Name"
+              value="<%= user.name %>"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="newEmail" class="col-sm-2 col-form-label"
+            >Email</label
+          >
+          <div class="col-sm-10">
+            <input
+              name="newEmail"
+              id="newEmail"
+              data-email="<%= user.email %>"
+              data-id="<%= user.userid %>"
+              type="text"
+              class="form-control"
+              placeholder="Email address"
+              value="<%= user.email %>"
+              required
+            />
+            <div id="newEmail-valid" class="valid-feedback">
+              Email address is available.
+          </div>
+          <div id="newEmail-invalid" class="invalid-feedback">
+              Email address already exist.
+          </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="card-footer">
+      <button
+        id="update-btn"
+        form="profile-form"
+        type="submit"
+        class="btn btn-success btn-icon-split"
+      >
+        <span class="icon text-white-50">
+          <i class="fas fa-database"></i>
+        </span>
+        <span class="text">Update</span>
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Check-email-Event - Check if email already exists
+                $('#newEmail').change(function() {
+                    const oldEmail = $(this).attr('data-email')
+                    const email = $(this).val()
+                    const emailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+                    const emailIsValid = emailFormat.test(email)
+                    
+                    if (email === oldEmail) {
+                        $('input#newEmail').removeClass('is-invalid').addClass('is-valid')
+                        $('#newEmail-valid').html('Email remain unchanged.')
+                    } else if (emailIsValid) {
+                        emailCheck(email)
+                    } else if (!email) {
+                        $('input#newEmail').removeClass('is-valid').addClass('is-invalid')
+                        $('#newEmail-invalid').html('Email is required.')
+                    } else {
+                        $('input#newEmail').removeClass('is-valid').addClass('is-invalid')
+                        $('#newEmail-invalid').html('Invalid format.')
+                    }
+                })
+
+                const emailCheck = (email) => {
+                    const userId = $('#newEmail').attr('data-email')
+                    $.post(`/profile/main/${userId}`, { email })
+                        .done(function(response) {
+                            if (response.data) {
+                                // Set input as valid
+                                $('input#newEmail').removeClass('is-invalid').addClass('is-valid')
+                                $('#newEmail-valid').html('Email address is available.')
+
+                            } else {
+                                // Set input as invalid
+                                $('input#newEmail').removeClass('is-valid').addClass('is-invalid')
+                                $('#newEmail-invalid').html('Email address already exist.')
+                            }
+                        })
+                        .fail(function(error) {
+                            alert('gagal ngecheck emailnya bro')
+                        })
+                }
+})
+</script>
+
+<!-- End of Main Content -->
+<%- include('../layouts/footer') %> 

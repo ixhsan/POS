@@ -1,0 +1,105 @@
+<%- include('../layouts/header') %> 
+<%- include('../layouts/nav') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Units</h1>
+
+    <!-- Form -->
+            <div id="units-section" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 id="units-form-title" class="m-0 font-weight-bold text-primary">Form add</h6>
+                </div>
+                <div class="card-body">
+                    <form id="units-form" method="POST" action="/units/add">
+                        <div class="form-group row">
+                        <label for="unit" class="col-sm-2 col-form-label">Unit</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="unit" name="unit" placeholder="Unit"  required>
+                            <div id="unit-valid" class="valid-feedback">
+                                Unit is available.
+                            </div>
+                            <div id="unit-invalid" class="invalid-feedback">
+                                Unit already exist.
+                            </div>
+                        </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                            <input type="" class="form-control" id="name" name="name" placeholder="Name" required>
+                            </div>
+                        </div>
+                        <div class="form-group row" id="note-form">
+                        <label for="note" class="col-sm-2 col-form-label">Note</label>
+                        <div class="col-sm-10">
+                            <textarea name="note" id="note" class="form-control" rows="3" required></textarea>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <button id="save-btn" form="units-form" type="submit" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-database"></i>
+                        </span>
+                        <span class="text">Save</span>
+                    </button>
+                    <a href="/units" class="btn btn-warning btn-icon-split" id="back-btn">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-undo"></i>
+                        </span>
+                        <span class="text">Back</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- End of Main Content -->
+
+<script>
+    $("document").ready(function () {
+        // Unit-Event - Check if unit already exists
+        $('#unit').change(function() {
+                    const unit = $(this).val()
+                    const unitOld = $(this).attr('data-id')
+
+                    if (unit === unitOld) {
+                        $('input#unit').removeClass('is-invalid').addClass('is-valid')
+                        $('#unit-valid').html('Unit remain unchanged.')
+                    } else if (unit) {
+                        unitCheck(unit)
+                    } else {
+                        $('input#unit').removeClass('is-valid').addClass('is-invalid')
+                        $('#unit-invalid').html('Unit is required.')
+                    }
+                })
+
+                const unitCheck = (unit) => {
+                    $.ajax({
+                            method: 'POST',
+                            url: `/units/data`,
+                            dataType: 'json',
+                            data: {
+                                unit,
+                            }
+                        }).done(function(response) {
+                            console.log('ini response', response);
+                            if (response.data) {
+                                $('input#unit').removeClass('is-invalid').addClass('is-valid')
+                                $('#unit-valid').html('Unit is available.')
+                            } else {
+                                $('input#unit').removeClass('is-valid').addClass('is-invalid')
+                                $('#unit-invalid').html('Unit already exist.')
+                            }
+                        }).fail(function(error) {
+                            alert('gagal bro')
+                        })
+                }
+    });
+  </script>
+
+<%- include('../layouts/footer') %> 

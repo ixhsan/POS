@@ -1,0 +1,94 @@
+<%- include('../layouts/header') %> 
+<%- include('../layouts/nav') %> 
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800">Users</h1>
+                <p>This is data of Users</p>
+                
+                <% if (error.length > 0) { %>
+                    <div class="btn btn-user btn-block alert alert-danger" role="alert"><%= error %></div>
+                    <% } %>
+                
+                    <% if (success.length > 0) { %>
+                      <div class="btn btn-user btn-block alert alert-success" role="alert"><%= success %></div>
+                      <% } %>
+
+<%- include('./list') %> 
+
+                </div>
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Begin Delete Modal -->
+            
+<%- include('../layouts/modal') %> 
+
+            <!-- End of Delete Modal -->
+
+            <script>
+            $(document).ready(function() {
+                // Read data
+                    $('#usersTable').DataTable({
+                        "lengthMenu": [[3, 10, 100, -1],[3, 10, 100]],
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax": "/users/data",
+                        "columns": [
+                            {'data': 'userid'},
+                            {'data': 'email'},
+                            {'data': 'name'},
+                            {'data': 'role'},
+                            {
+                                'data': 'userid',
+                                'orderable': false,
+                                'render': function(data) {
+                                    return `<a href="/users/data/${data}" class="btn btn-success btn-circle anchor_edit"><i class="fas fa-info-circle"></i></a>  <button data-id="${data}" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-circle anchor_remove"><i class="fas fa-trash"></i></button>`
+                                }
+                            }
+                        ]
+                    })
+                
+                // Delete button
+                    $('#usersTable').on('click', 'button.anchor_remove', function(e) {
+                        e.preventDefault()
+                        // Get the PK
+                        const dataId = $(this).attr('data-id')
+
+                        // Append tag to the element
+                        $('a#delete-confirmation').attr("data-id", dataId)
+                    })
+                    
+                    
+            /*############## DELETE MODAL ##############*/
+                // Delete Confirmation
+                    $('a#delete-confirmation').click(function() {
+                    // Get the PK
+                    const dataId = $(this).attr('data-id')
+
+                    // Use the PK to delete the data
+                    deleteData(dataId)
+                })
+
+                })
+
+                //Delete data
+                const deleteData = (id) => {
+                    $.ajax({
+                        method: 'DELETE',
+                        url: `/users/data/${id}`,
+                        dataType: 'json'
+                    }).done(function(response) {
+                        $('#deleteModal').modal('toggle')
+                        $('#usersTable').DataTable().clear().ajax.reload()
+                    }).fail(function(error) {
+                        console.log('Failure when deleting', error);
+                        alert('Failure when deleting!')
+                    })
+                }
+
+            </script>
+
+<%- include('../layouts/footer') %> 

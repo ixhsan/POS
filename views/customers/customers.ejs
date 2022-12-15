@@ -1,0 +1,86 @@
+<%- include('../layouts/header') %> 
+<%- include('../layouts/nav') %> 
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Customers</h1>
+                    <p>This is data of Customers</p>
+                
+                    <% if (error.length > 0) { %>
+                        <div class="btn btn-user btn-block alert alert-danger" role="alert"><%= error %></div>
+                        <% } %>
+                    
+                        <% if (success.length > 0) { %>
+                          <div class="btn btn-user btn-block alert alert-success" role="alert"><%= success %></div>
+                          <% } %>
+<%- include('./list') %> 
+
+                </div>
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Begin Delete Modal -->
+            
+<%- include('../layouts/modal') %>
+
+            <!-- End of Delete Modal -->
+
+            <script>
+            $(document).ready(function() {
+            /*############## MAIN PAGE - CUSTOMERS ##############*/
+
+                // Table - Read data
+                    $('#dataCustomers').DataTable({
+                        "lengthMenu": [[3, 10, 100, -1],[3, 10, 100]],
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax": "/customers/data",
+                        "columns": [
+                            {'data': 'customerid'},
+                            {'data': 'name'},
+                            {'data': 'address'},
+                            {'data': 'phone'},
+                            {
+                                'data': 'customerid',
+                                'orderable': false,
+                                'render': function(data) {
+                                    return `<a href="/customers/data/${data}" class="btn btn-success btn-circle anchor_edit"><i class="fas fa-info-circle"></i></a>  <a data-id="${data}" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-circle anchor_remove"><i class="fas fa-trash"></i></a>`
+                                }
+                            }
+                        ]
+                    })
+                
+                    // Table - Delete data
+                        $('#dataCustomers').on('click', 'a.anchor_remove', function(e) {
+                            e.preventDefault()
+                            const customerid = $(this).attr('data-id')
+                            $('a#delete-confirmation').attr("data-id", customerid)
+                        })
+                    
+                /*################ MODAL - DELETE ################*/
+                    // Delete Confirmation
+                        $('a#delete-confirmation').click(function() {
+                        const customerid = $(this).attr('data-id')
+                        deleteData(customerid)
+                    })
+                    
+                })
+
+                //Delete data
+                const deleteData = (customerid) => {
+                    $.ajax({
+                        method: 'DELETE',
+                        url: `/customers/data/${customerid}`,
+                        dataType: 'json'
+                    }).done(function(response) {
+                        $('#deleteModal').modal('toggle')
+                        $('#dataCustomers').DataTable().clear().ajax.reload()
+                    }).fail(function(error) {
+                        alert('gagal bro')
+                    })
+                }
+            </script>
+
+<%- include('../layouts/footer') %> 

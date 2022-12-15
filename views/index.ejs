@@ -1,0 +1,554 @@
+<%- include('./layouts/header') %> 
+<%- include('./layouts/nav') %> 
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+      <!-- Page Heading -->
+      <div
+        class="d-sm-flex align-items-center justify-content-between mb-4"
+      >
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <button
+          id="download-report"
+          class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+          ><i class="fas fa-download fa-sm text-white-50"></i> Generate
+          Report</button
+        >
+      </div>
+
+      <!-- Date Settings -->
+      <div id="earnings-section" class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 id="earnings-form-title" class="m-0 font-weight-bold text-primary">
+            Date Settings
+          </h6>
+        </div>
+        <div class="card-body">
+          <form id="earnings-form" action="/" method="POST">
+            <div class="row input-with-post-icon datepicker" inline="true">
+              <div class="col">
+                <label for="name" class="col-sm-auto col-form-label">Start date</label>
+                <div class="input-group">
+                  <input
+                      name="startDate"
+                      type="date"
+                      class="form-control py-2 border-right-0"
+                      id="start-date"
+                      placeholder="yyyy/mm/dd"
+                    />
+                    <span class="input-group-append ml-n1">
+                      <div class="input-group-text bg-transparent"><i class="fa fa-calendar-alt"></i></div>
+                    </span>
+                </div>
+              </div>
+              <div class="col">
+              <label for="name" class="col-sm-auto col-form-label ml-n1">End date</label>
+              <div class="input-group">
+                <input
+                    name="endDate"
+                    type="date"
+                    class="form-control py-2 border-right-0"
+                    id="end-date"
+                    placeholder="yyyy/mm/dd"
+                  />
+                  <span class="input-group-append ml-n1">
+                    <div class="input-group-text bg-transparent"><i class="fa fa-calendar-alt"></i></div>
+                  </span>
+              </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer">
+          <button
+            id="query-btn"
+            form="earnings-form"
+            type="submit"
+            class="btn btn-success btn-icon-split"
+          >
+            <span class="icon text-white-50">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="text">Query</span>
+          </button>
+          <button
+            class="btn btn-warning btn-icon-split"
+            id="reset-btn"
+          >
+            <span class="icon text-white-50">
+              <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Reset</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Content Row -->
+      <div class="row">
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div
+                    class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                  >
+                    Purchase
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800" id="display-purchase">
+                    Not connected
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div
+                    class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                  >
+                    Sales
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800" id="display-sales">
+                    Not connected
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div
+                    class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                  >
+                    Earnings
+                  </div>
+                  <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                      <div
+                        class="h5 mb-0 mr-3 font-weight-bold text-gray-800"
+                        id="display-earnings">
+                        Not connected
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i
+                    class="fas fa-dollar-sign fa-2x text-gray-300"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div
+                    class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                  >
+                    Total Sales
+                  </div>
+                  <!-- <div class="h5 mb-0 font-weight-bold text-gray-800" id="display-total-sales">
+                    Not connected
+                  </div> -->
+                  <h5 class="mb-0 font-weight-bold text-gray-800" id="display-total-sales">Not connected</h5>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-comments fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Row -->
+
+      <div class="row">
+        <!-- Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+          <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div
+              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+            >
+              <h6 class="m-0 font-weight-bold text-primary">
+                Earnings Overview
+              </h6>
+              <div class="dropdown no-arrow">
+                <a
+                  class="dropdown-toggle"
+                  href="#"
+                  role="button"
+                  id="dropdownMenuLink"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i
+                    class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"
+                  ></i>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                  aria-labelledby="dropdownMenuLink"
+                >
+                  <div class="dropdown-header">Dropdown Header:</div>
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#"
+                    >Something else here</a
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+              <div class="chart-area">
+                <canvas id="earnings-line-chart" width="auto" height="auto"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- doughnut Chart -->
+        <div class="col-xl-4 col-lg-5">
+          <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div
+              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+            >
+              <h6 class="m-0 font-weight-bold text-primary">
+                Revenue Sources
+              </h6>
+              <div class="dropdown no-arrow">
+                <a
+                  class="dropdown-toggle"
+                  href="#"
+                  role="button"
+                  id="dropdownMenuLink"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i
+                    class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"
+                  ></i>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                  aria-labelledby="dropdownMenuLink"
+                >
+                  <div class="dropdown-header">Dropdown Header:</div>
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#"
+                    >Something else here</a
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+              <div class="chart-pie pt-4 pb-2">
+                <canvas id="customer-doughnut-chart" width="auto" height="auto"></canvas>
+              </div>
+              <div class="mt-4 text-center small">
+                <span class="mr-2">
+                  <i class="fas fa-circle text-primary"></i> Direct
+                </span>
+                <span class="mr-2">
+                  <i class="fas fa-circle text-success"></i> Customer
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<!-- DataTables -->
+<div class="card shadow mb-4" id="sale-table">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">
+      Earnings Monthly Report
+    </h6>
+  </div>
+  <div class="card-body">
+      <div class="table-responsive">
+          <table class="table table-bordered" id="table-monthly-report" width="100%" cellspacing="0">
+              <thead>
+                  <tr>
+                      <th>Monthly</th>
+                      <th>Expense</th>
+                      <th>Revenue</th>
+                      <th>Earnings</th>
+                  </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  <th>Total</th>
+                  <th>Not Connected</th>
+                  <th>Not Connected</th>
+                  <th>Not Connected</th>
+                </tr>
+            </tfoot>
+          </table>
+      </div>
+  </div>
+</div>
+
+<script>
+$('document').ready(function() {
+  const readStats = () => {
+            $.ajax({
+                        method: 'GET',
+                        url: `/main`,
+                    }).done(function(response) {
+                        $('#display-total-sales').html(response.stats.timessales)
+                        $('#display-purchase').html(currencyFormatter.format(response.stats.totalpurchases))
+                        $('#display-sales').html(currencyFormatter.format(response.stats.totalsales))
+                        $('#display-earnings').html(currencyFormatter.format(response.stats.earnings))
+                    }).fail(function(error) {
+                        console.log('error chart waktu read data stats bar', error);
+                        alert('gagal bro chartnya')
+                    })
+        }
+
+  readStats()
+
+  // Read datatable Main Page
+  $('#table-monthly-report').DataTable({
+                    "lengthMenu": [[3, 10, 100, -1],[3, 10, 100]],
+                    "processing": true,
+                    "ajax": `/main/table`,
+                    "serverSide": true,
+                    "footerCallback": function(row, data, start, end, display) {
+                      let api = this.api()
+                        api.columns([1,2,3], {
+                        page: 'current'
+                        }).every(function() {
+                          var sum = this
+                          .data()
+                          .reduce(function(a, b) {
+                            var x = parseFloat(a) || 0;
+                            var y = parseFloat(b) || 0;
+                            return x + y;
+                          }, 0)
+                          $(this.footer()).html(currencyFormatter.format(sum))
+                        })
+                    },
+                    "columns": [
+                        {'data': 'monthly'},
+                        {
+                          'data': 'expense',
+                          'render': function(data) {
+                                return currencyFormatter.format(data)
+                            }
+                        },
+                        {
+                          'data': 'revenue',
+                          'render': function(data) {
+                                return currencyFormatter.format(data)
+                            }
+                        },
+                        {
+                          'data': 'earnings',
+                          'render': function(data) {
+                                return currencyFormatter.format(data)
+                            }
+                        }
+                    ],
+  })
+
+  $('#reset-btn').click(function () {
+    $('#earnings-form').trigger('reset')
+    readCharts()
+  })
+
+  let startDate = 0
+  let earningsDefaultLabel = []
+  let earningsDefaultData = []
+  let customerDefaultLabel = []
+  let customerDefaultData = []
+
+  const chartLine = new Chart($('#earnings-line-chart'), {
+    type: 'line',
+    data: {
+      labels: earningsDefaultLabel = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '',
+        data: earningsDefaultData = [10, 10, 2, 15, 2, 3],
+        borderWidth: 3,
+        borderColor: 'rgb(78, 115, 223)',
+        backgroundColor: 'rgba(237, 241, 252, 0.4)'
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        },
+        yAxes: [{
+                ticks: {
+                    // Include a currency sign in the ticks
+                    callback: function(value, index, values) {
+                        return currencyFormatter.format(value);
+                    }
+                }
+            }]
+      },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        callbacks: {
+          // Include a currency sign in tooltips
+          label: function(item, data) {
+            return currencyFormatter.format(item.yLabel)
+          }
+        }
+      },
+      maintainAspectRatio : false,
+    }
+  });
+
+  const chartDoughnut = new Chart($('#customer-doughnut-chart'), {
+    type: 'doughnut',
+    data: {
+      labels: customerDefaultLabel = [
+        'Direct',
+        'Customer',
+      ],
+      datasets: [{
+          label: '',
+          data: customerDefaultData = [300, 100],
+          backgroundColor: [
+            'rgb(0, 123, 255)',
+            'rgb(61, 176, 88)',
+          ],
+          hoverOffset: 4,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        cutoutPercentage: 80,
+        legend: {
+          display: false
+        },
+        maintainAspectRatio : false
+      }
+  });
+
+  // Read chart data
+  const readCharts = (query = {}) => {
+    // const [startDate, endDate] = query
+
+      $.ajax({
+        method: 'GET',
+        url: '/main/chart',
+        data: query,
+      })
+      .done(function(response) {
+        // reset line chart
+        if(response.line.length) {
+          while (earningsDefaultData.length) {earningsDefaultData.pop()}
+          while (earningsDefaultLabel.length) {earningsDefaultLabel.pop()}
+          response.line.forEach((item) => {
+              earningsDefaultData.push(item.earnings)
+              earningsDefaultLabel.push(item.date)
+            })
+            chartLine.update()
+          }
+
+        // reset doughnut chart
+        if(response.doughnut.length) {
+            while (customerDefaultData.length) {customerDefaultData.pop()}
+            response.doughnut.forEach((item) => {
+              customerDefaultData.push(item.direct)
+              customerDefaultData.push(item.customer)
+            })
+            chartDoughnut.update()
+        }
+      }).fail(function(error) {
+        console.log('error waktu read charts', error);
+        alert("Failed to read data");
+      })
+    }
+
+
+readCharts()
+
+$('#earnings-form').submit(function (e) {
+  e.preventDefault()
+  const startDate = $('#start-date').val()
+  const endDate = $('#end-date').val()
+  const response = {
+    startDate,
+    endDate
+  }
+  readCharts(response)
+})
+
+const { Parser } = json2csv
+const makeCSV = new Parser
+
+$('#download-report').click(function() {
+  $.get(`/main/report`)
+  .done(function(response) {
+    let report = makeCSV.parse(response.data)
+    
+    let csvFile;
+    let downloadLink;
+
+    // define the file type to text/csv
+    csvFile = new Blob([report], {type: 'text/csv'});
+    downloadLink = document. createElement("a");
+    downloadLink.download = `monthly-report-2022`;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  })
+  .fail(function(error) {
+    console.log(`error di fungsi download`, error);
+  })
+})
+
+})
+
+</script>
+
+    </div>
+    <!-- /.container-fluid -->
+    </div>
+    <!-- End of Main Content -->
+
+    <%- include('./layouts/footer') %> 

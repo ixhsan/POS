@@ -1,0 +1,75 @@
+<li class="nav-item dropdown no-arrow mx-1">
+  <a
+    class="nav-link dropdown-toggle"
+    href="#"
+    id="alertsDropdown"
+    role="button"
+    data-toggle="dropdown"
+    aria-haspopup="true"
+    aria-expanded="false"
+  >
+    <i class="fas fa-bell fa-fw"></i>
+    <!-- Counter - Alerts -->
+    <span class="badge badge-danger badge-counter"></span>
+  </a>
+  <!-- Dropdown - Alerts -->
+  <div
+    class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" id="alertsList"
+    aria-labelledby="alertsDropdown"
+  >
+    <h6 class="dropdown-header">Alerts Center</h6>
+    <a
+      href="#"
+      class="dropdown-item d-flex align-items-center text-center medium text-gray-500"
+    >
+      No notification
+    </a>
+  </div>
+</li>
+
+
+<script>
+  $(document).ready(function () {
+    //. Check for low stock
+    updateAlert();
+  });
+
+  const updateAlert = () => {
+    $.get("/goods/data/check")
+      .done(function (response) {
+        let alertsData = `<h6 class="dropdown-header">Alerts Center</h6>`
+        let alertsNotif = `<i class="fas fa-bell fa-fw"></i>`
+
+        if(response.data.length > 0) {
+          alertsNotif += `<span class="badge badge-danger badge-counter">${response.data.length > 3 ? `3+`: response.data.length}</span>`
+  
+          response.data.forEach((element) => {
+            alertsData += `<a class="dropdown-item d-flex align-items-center" href="/purchases/new">
+                  <div class="mr-3">
+                    <div class="icon-circle bg-warning">
+                      <i class="fas fa-exclamation-triangle text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="small text-gray-500">Barcode: ${element.barcode}</div>
+                    Stock Alert: ${element.name} remaining stock is <span class="font-weight-bold">${element.stock}</span>
+                  </div>
+          </a>`;
+          });
+  
+          $('#alertsDropdown').html(alertsNotif)
+          $('#alertsList').html(alertsData)
+        } else {
+          alertsData += `<a href="#" class="dropdown-item d-flex align-items-center text-center medium text-gray-500">No notification</a>`
+
+          $('#alertsDropdown').html(alertsNotif)
+          $('#alertsList').html(alertsData)
+        }
+      })
+      .fail(function (err) {
+        console.log('error notification', err);
+        alert("something is wrong with notifications!");
+      });
+  };
+
+</script>

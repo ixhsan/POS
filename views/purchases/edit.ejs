@@ -1,0 +1,296 @@
+<%- include('../layouts/header') %> 
+<%- include('../layouts/nav') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Purchases</h1>
+
+        <div id="purchase-section" class="card shadow mb-4">
+          <div class="card-header py-3">
+              <h3 id="purchase-form-title" class="m-0 font-weight-light text-grey">Transaction</h3>
+          </div>
+          <div class="card-body">
+              <form id="purchase-form" method="POST">
+                  <div class="row pb-3">
+                      <div class="col">
+                        <label for="invoice" class="col-sm-auto col-form-label">Invoice</label>
+                      <input form="invoice-form" name="invoice" type="text" id="invoice" class="form-control" placeholder="Invoice Number" value="<%= invoice.invoice %>" disabled>
+                      </div>
+                      <div class="col">
+                          <label for="name" class="col-sm-auto col-form-label">Time</label>
+                            <input type="" id="time" name="time" class="form-control" placeholder="DD MMMM YYYY HH:MM:SS" value="<%= setDate(invoice.time).format('DD MMM YYYY HH:mm:ss') %>" disabled>
+                      </div>
+                      <div class="col">
+                          <label for="operator" class="col-sm-auto col-form-label">Operator</label>
+                            <input type="" id="operator" name="operator" class="form-control" placeholder="Operator" value="<%= invoice.operator %>" disabled>
+                      </div>
+                  </div>
+              </form>
+              <form id="invoice-form" action="/purchases/data/invoice/<%= invoice.invoice %>">
+                  <hr>
+                  <div class="row pb-3">
+                      <div class="col">
+                        <label for="itemcode" class="col-sm-auto col-form-label">Goods Barcode</label>
+                        <select name="itemcode" id="itemcode" class="form-control">
+                            <% goods.forEach((data) => { %>
+                            <option value="<%= data.barcode %>"> <%= data.barcode + ` - ` + data.name %></option>
+                            <% }) %>
+                            </select>
+                      </div>
+                      <div class="col">
+                          <label for="goodsname" class="col-sm-auto col-form-label">Goods Name</label>
+                          <input type="text" id="goodsname" class="form-control" placeholder="Name" value="<%= goods[0].name %>" disabled>
+                      </div>
+                      <div class="col">
+                          <label for="stock" class="col-sm-auto col-form-label">Stock</label>
+                          <input type="number" id="stock" class="form-control" placeholder="0" value="<%= goods[0].stock %>" disabled>
+                      </div>
+                  </div>
+                  <div class="row pb-3">
+                      <div class="col">
+                          <label for="purchaseprice" class="col-sm-auto col-form-label">Purchase Price</label>
+                          <input type="number" step="1" min="'0" class="form-control" id="purchaseprice" placeholder="0.00" value="<%= goods[0].purchaseprice %>" required>
+                      </div>
+                      <div class="col">
+                          <label for="quantity" class="col-sm-auto col-form-label">Qty</label>
+                          <input name="quantity" id="quantity" type="number" min="0" class="form-control" placeholder="0" required>
+                      </div>
+                      <div class="col">
+                          <label for="totalprice" class="col-sm-auto col-form-label">Total Price</label>
+                          <input type="number" min="0" class="form-control" id="totalprice" placeholder="0" disabled>
+                      </div>
+                  </div>
+                  <div class="pt-3">
+                      <button id="invoice-add-btn" class="btn btn-primary btn-icon-split">
+                          <span class="icon text-white-50">
+                              <i class="fas fa-plus"></i>
+                          </span>
+                          <span class="text">Add</span>
+                      </button>
+                  </div>
+              </form>
+          </div>
+          <hr>
+          <div class="table-responsive">
+              <table class="table table-bordered" id="dataInvoice" width="100%" cellspacing="0">
+                  <thead>
+                      <tr>
+                          <th>No</th>
+                          <th>Barcode</th>
+                          <th>Name</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total Price</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tfoot>
+                      <tr>
+                          <th>No</th>
+                          <th>Barcode</th>
+                          <th>Name</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total Price</th>
+                          <th>Action</th>
+                      </tr>
+                  </tfoot>
+              </table>
+          </div>
+          <div class="card-footer">
+              <div class="form-group row">
+                  <label for="unit" class="col-sm-2 col-form-label">Total Summary</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="totalsum" placeholder="0,00" value="<%= invoice.totalsum %>" disabled>
+                </div>
+                </div>
+                <form id="supplier-form" action="/purchases/transaction/<%= invoice.invoice %>" method="POST">
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label pb-3">Supplier</label>
+                    <div class="col-sm-10">
+                        <select id="suppliers" name="suppliers" class="form-control">
+                            <option value="" disabled <%= invoice.supplier ? `` : `selected`%>>Select supplier</option>
+                            <% supplier.forEach((data) => { %>
+                                <option value="<%= data.supplierid %>" <%= invoice.supplier === data.supplierid ? `selected`: ``%>><%= data.supplierid + '. ' + data.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <button form="supplier-form" id="purchase-save-btn" type="submit" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    <span class="text">Finish</span>
+                </button>
+              <a href="/purchases" class="btn btn-warning btn-icon-split" id="back-btn">
+                  <span class="icon text-white-50">
+                      <i class="fas fa-arrow-left"></i>
+                  </span>
+                  <span class="text">Back</span>
+              </a>
+          </div>
+      </div>
+</div>
+</div>
+<!-- End of Main Content -->
+
+<!-- Begin Delete Modal -->
+            
+    <%- include('../layouts/modal') %> 
+
+<!-- End of Delete Modal -->
+
+  <script>
+      $("document").ready(function () {
+        const noInvoice = $('#invoice').val()
+
+     // Read datatable Main Page
+                $('#dataInvoice').DataTable({
+                    "lengthChange": false,
+                    "bFilter": false,
+                    "paging": false,
+                    "info": false,
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": `/purchases/data/invoice/${noInvoice}`,
+                    "columns": [
+                        {'data': 'id'},
+                        {'data': 'itemcode'},
+                        {'data': 'name'},
+                        {'data': 'quantity'},
+                        {
+                            'data': 'purchaseprice',
+                            'render': function(data) {
+                                return currencyFormatter.format(data)
+                            }
+                        },
+                        {
+                            'data': 'totalprice',
+                            'render': function(data) {
+                                return currencyFormatter.format(data)
+                            }
+                        },
+                        {
+                            'data': 'id',
+                            'orderable': false,
+                            'render': function(data) {
+                                return `<a data-id="${data}" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-circle anchor_remove"><i class="fas fa-trash"></i></a>`
+                            }
+                        }
+                    ]
+                })
+
+     /* EVENT */
+     // Add item
+                $('#invoice-form').submit(function(e) {
+                    e.preventDefault()
+                    const invoice = $('#invoice').val()
+                    const itemcode = $('#itemcode').val()
+                    const qty = $('#quantity').val()
+
+                    addItem(invoice, itemcode, qty)
+                })
+    
+     // Add quantity event
+                $('#quantity').change(function() {
+                    const purchasePrice = $('#purchaseprice').val()
+                    const quantity = $(this).val()
+
+                    // update goods stock and total price
+                    updateGoods($('#itemcode').val(), true)
+                    $('#totalprice').val(quantity * purchasePrice)
+                })
+
+     // Select item event
+                $('#itemcode').change(function() {
+                    const itemSelected = $(this).val()
+                    updateGoods(itemSelected)
+                })
+
+     // Delete item event
+                $('#dataInvoice').on('click', 'a.anchor_remove', function(e) {
+                        e.preventDefault()
+                        const itemId = $(this).attr('data-id')
+                        $('a#delete-confirmation').attr("data-id", itemId)
+                    })
+                    
+                $('a#delete-confirmation').click(function() {
+                    const itemId = $(this).attr('data-id')
+                    deleteData(itemId)
+                })
+
+    });
+            
+    /*############## API ##############*/
+
+                // add item into list
+                const addItem = (invoice, itemcode, quantity) => {
+                    console.log(`masuk add`, invoice, itemcode, quantity);
+                    $.post(`/purchases/data/invoice/${invoice}`, { itemcode, quantity })
+                        .done(function (response) {
+                        console.log(response);
+                        // Reset quantity
+                        $('#quantity').val(0)
+                        
+                        // Reload table
+                        $('#totalsum').val(response.data.totalsum)
+                        $('#dataInvoice').DataTable().clear().ajax.reload();
+
+                        // updateSum()
+                        setTimeout(()=> {
+                            updateAlert()
+                        }, 2000)
+                        })
+                        .fail(function (err) {
+                        console.log(err);
+                        alert("gagal pake jquery");
+                        });
+                };
+
+                // Delete item from invoice list
+                const deleteData = (id) => {
+                    const invoice = $('#invoice').val()
+                    $.ajax({
+                        method: 'DELETE',
+                        url: `/purchases/data/item/${id}`,
+                        dataType: 'json',
+                        data: {
+                            invoice
+                        }
+                    }).done(function(response) {
+                        $('#totalsum').val(response.data.totalsum)
+                        $('#deleteModal').modal('toggle')
+                                                
+                        $('#dataInvoice').DataTable().clear().ajax.reload()
+                        // updateSum()
+                        setTimeout(()=> {
+                            updateAlert()
+                        }, 2000)
+                    }).fail(function(error) {
+                        alert('gagal bro')
+                    })
+                }
+
+                // Get Goods
+                const updateGoods = (barcode, stock) => {
+                    $.post(`/purchases/data/goods/${barcode}`)
+                    .done(function(response) {
+                        if (stock) {
+                            $('#stock').val(response.stock + parseInt($('#quantity').val()))
+                        } else {
+                            $('#goodsname').val(response.name)
+                            $('#stock').val(response.stock)
+                            $('#purchaseprice').val(response.purchaseprice)
+                        }
+                    })
+                    .fail(function(error) {
+                        alert(`update goods gagal bro`)
+                    })
+                }
+
+  </script>
+
+<%- include('../layouts/footer') %> 

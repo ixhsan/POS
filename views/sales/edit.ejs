@@ -1,0 +1,315 @@
+<%- include('../layouts/header') %> 
+<%- include('../layouts/nav') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Sales</h1>
+        <p>This is data of Sales</p>
+
+        <div id="sale-section" class="card shadow mb-4">
+          <div class="card-header py-3">
+              <h3 id="sale-form-title" class="m-0 font-weight-light text-grey">Transaction</h3>
+          </div>
+          <div class="card-body">
+              <form id="sale-form" method="POST">
+                  <div class="row pb-3">
+                      <div class="col">
+                        <label for="invoice" class="col-sm-auto col-form-label">Invoice</label>
+                      <input form="invoice-form" name="invoice" type="text" id="invoice" class="form-control" placeholder="Invoice Number" value="<%= invoice.invoice %>" disabled>
+                      </div>
+                      <div class="col">
+                          <label for="name" class="col-sm-auto col-form-label">Time</label>
+                            <input type="" id="time" name="time" class="form-control" placeholder="DD MMMM YYYY HH:MM:SS" value="<%= setDate(invoice.time).format('DD MMM YYYY HH:mm:ss') %>" disabled>
+                      </div>
+                      <div class="col">
+                          <label for="operator" class="col-sm-auto col-form-label">Operator</label>
+                            <input type="" id="operator" name="operator" class="form-control" placeholder="Operator" value="<%= invoice.operator %>" disabled>
+                      </div>
+                  </div>
+              </form>
+              <form id="invoice-form" action="/sales/data/invoice/<%= invoice.invoice %>">
+                  <hr>
+                  <div class="row pb-3">
+                      <div class="col">
+                        <label for="itemcode" class="col-sm-auto col-form-label">Goods Barcode</label>
+                        <select name="itemcode" id="itemcode" class="form-control">
+                            <% goods.forEach((data) => { %>
+                            <option value="<%= data.barcode %>"> <%= data.barcode + ` - ` + data.name %></option>
+                            <% }) %>
+                            </select>
+                      </div>
+                      <div class="col">
+                          <label for="goodsname" class="col-sm-auto col-form-label">Goods Name</label>
+                          <input type="text" id="goodsname" class="form-control" placeholder="Name" value="<%= goods[0].name %>" disabled>
+                      </div>
+                      <div class="col">
+                          <label for="stock" class="col-sm-auto col-form-label">Stock</label>
+                          <input type="number" id="stock" class="form-control" placeholder="0" value="<%= goods[0].stock %>" disabled>
+                      </div>
+                  </div>
+                  <div class="row pb-3">
+                      <div class="col">
+                          <label for="sellingprice" class="col-sm-auto col-form-label">Selling Price</label>
+                          <input type="number" step="1" min="'0" class="form-control" id="sellingprice" placeholder="0.00" value="<%= goods[0].sellingprice %>" required>
+                      </div>
+                      <div class="col">
+                          <label for="quantity" class="col-sm-auto col-form-label">Qty</label>
+                          <input name="quantity" id="quantity" type="number" min="0" class="form-control" placeholder="0" required>
+                      </div>
+                      <div class="col">
+                          <label for="totalprice" class="col-sm-auto col-form-label">Total Price</label>
+                          <input type="number" min="0" class="form-control" id="totalprice" placeholder="0" disabled>
+                      </div>
+                  </div>
+                  <div class="pt-3">
+                      <button id="invoice-add-btn" class="btn btn-primary btn-icon-split">
+                          <span class="icon text-white-50">
+                              <i class="fas fa-plus"></i>
+                          </span>
+                          <span class="text">Add</span>
+                      </button>
+                  </div>
+              </form>
+          </div>
+          <hr>
+          <div class="table-responsive">
+              <table class="table table-bordered" id="dataInvoice" width="100%" cellspacing="0">
+                  <thead>
+                      <tr>
+                          <th>No</th>
+                          <th>Barcode</th>
+                          <th>Name</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total Price</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tfoot>
+                      <tr>
+                          <th>No</th>
+                          <th>Barcode</th>
+                          <th>Name</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total Price</th>
+                          <th>Action</th>
+                      </tr>
+                  </tfoot>
+              </table>
+          </div>
+          <div class="card-footer">
+              <div class="form-group row">
+                  <label for="totalsum" class="col-sm-2 col-form-label">Total Summary</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="totalsum" placeholder="0,00" value="<%= invoice.totalsum %>" readonly>
+                </div>
+                </div>
+            <form id="customer-form" action="/sales/transaction/<%= invoice.invoice %>" method="POST">
+                <div class="form-group row">
+                    <label for="pay" class="col-sm-2 col-form-label">Pay</label>
+                    <div class="col-sm-10">
+                      <input name="pay" type="number" class="form-control" id="pay" placeholder="0,00" value="<%= invoice.pay != 0 ? invoice.pay: `` %>" pattern="[0-9]+" title="please enter number only" min="0" required>
+                  </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="change" class="col-sm-2 col-form-label">Change</label>
+                    <div class="col-sm-10">
+                      <input name="change" type="text" class="form-control" id="change" placeholder="0,00" value="<%= invoice.change %>" readonly>
+                  </div>
+                  </div>
+                <div class="form-group row">
+                    <label for="customers" class="col-sm-2 col-form-label pb-3">Customer</label>
+                    <div class="col-sm-10">
+                        <select id="customer" name="customer" class="form-control">
+                            <option value="" disabled <%= invoice.customer ? `` : `selected`%>>Select customer</option>
+                            <% customer.forEach((data) => { %>
+                                <option value="<%= data.customerid %>" <%= invoice.customer === data.customerid ? `selected`: ``%>><%= data.customerid + '. ' + data.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                <button form="customer-form" id="sale-save-btn" type="submit" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    <span class="text">Finish</span>
+                </button>
+              <a href="/sales" class="btn btn-warning btn-icon-split" id="back-btn">
+                  <span class="icon text-white-50">
+                      <i class="fas fa-arrow-left"></i>
+                  </span>
+                  <span class="text">Back</span>
+              </a>
+          </div>
+      </div>
+</div>
+</div>
+<!-- End of Main Content -->
+
+<!-- Begin Delete Modal -->
+            
+    <%- include('../layouts/modal') %> 
+
+<!-- End of Delete Modal -->
+
+  <script>
+          $("document").ready(function () {
+        const noInvoice = $('#invoice').val()
+
+     // Read datatable Main Page
+                $('#dataInvoice').DataTable({
+                    "lengthChange": false,
+                    "bFilter": false,
+                    "paging": false,
+                    "info": false,
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": `/sales/data/invoice/${noInvoice}`,
+                    "columns": [
+                        {'data': 'id'},
+                        {'data': 'itemcode'},
+                        {'data': 'name'},
+                        {'data': 'quantity'},
+                        {
+                            'data': 'sellingprice',
+                            'render': function(data) {
+                                return currencyFormatter.format(data)
+                            }
+                        },
+                        {
+                            'data': 'totalprice',
+                            'render': function(data) {
+                                return currencyFormatter.format(data)
+                            }
+                        },
+                        {
+                            'data': 'id',
+                            'orderable': false,
+                            'render': function(data) {
+                                return `<a data-id="${data}" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-circle anchor_remove"><i class="fas fa-trash"></i></a>`
+                            }
+                        }
+                    ]
+                })
+
+     /* EVENT */
+     // Add item
+                $('#invoice-form').submit(function(e) {
+                    e.preventDefault()
+                    const invoice = $('#invoice').val()
+                    const itemcode = $('#itemcode').val()
+                    const qty = $('#quantity').val()
+
+                    addItem(invoice, itemcode, qty)
+                })
+    
+     // Add quantity event
+                $('#quantity').change(function() {
+                    const sellingPrice = $('#sellingprice').val()
+                    const quantity = $(this).val()
+
+                    // subtract goods stock
+                    updateGoods($('#itemcode').val(), true)
+                    $('#totalprice').val(quantity * sellingPrice)
+                })
+                
+    // Pay event
+                $('#pay').keyup(function() {
+                    const totalsum = $('#totalsum').val()
+                    const pay = $(this).val()
+                    $('#change').val(pay - totalsum)
+                })
+
+     // Select item event
+                $('#itemcode').change(function() {
+                    const itemSelected = $(this).val()
+                    updateGoods(itemSelected)
+                })
+
+     // Delete item event
+                $('#dataInvoice').on('click', 'a.anchor_remove', function(e) {
+                        e.preventDefault()
+                        const itemId = $(this).attr('data-id')
+                        $('a#delete-confirmation').attr("data-id", itemId)
+                    })
+                    
+                $('a#delete-confirmation').click(function() {
+                    const itemId = $(this).attr('data-id')
+                    deleteData(itemId)
+                })
+
+    });
+            
+    /*############## API ##############*/
+
+                // add item list
+                const addItem = (invoice, itemcode, quantity) => {
+                    $.post(`/sales/data/invoice/${invoice}`, {itemcode, quantity })
+                        .done(function (response) {
+                        // Reload table
+                        $('#totalsum').val(response.data.totalsum)
+                        $('#quantity').val(0)
+                        $('#dataInvoice').DataTable().clear().ajax.reload();
+
+                        // updateSum()
+                        setTimeout(()=> {
+                            updateAlert()
+                        }, 2000)
+                        })
+                        .fail(function (err) {
+                        console.log('error add item', err);
+                        alert("gagal adding item into invoice");
+                        });
+                };
+
+                // Delete item from invoice list
+                const deleteData = (id) => {
+                    const invoice = $('#invoice').val()
+                    $.ajax({
+                        method: 'DELETE',
+                        url: `/sales/data/item/${id}`,
+                        dataType: 'json',
+                        data: {
+                            invoice
+                        }
+                    }).done(function(response) {
+                        $('#totalsum').val(response.data.totalsum)
+                        $('#deleteModal').modal('toggle')
+
+                        // subtract goods stock
+                        updateGoods($('#itemcode').val(), true)
+                        $('#dataInvoice').DataTable().clear().ajax.reload()
+
+                        setTimeout(()=> {
+                            updateAlert()
+                        }, 2000)
+                    }).fail(function(error) {
+                        console.log('error delete item dari invoice', error);
+                        alert('gagal bro')
+                    })
+                }
+
+                // Get Goods
+                const updateGoods = (barcode, stock) => {
+                    $.post(`/sales/data/goods/${barcode}`)
+                    .done(function(response) {
+                        if (stock) {
+                            $('#stock').val(response.stock - $('#quantity').val())
+                        } else {
+                            $('#goodsname').val(response.name)
+                            $('#stock').val(response.stock)
+                            $('#sellingprice').val(response.sellingprice)
+                        }
+                    })
+                    .fail(function(error) {
+                        console.log('error update goods', error);
+                        alert(`update goods gagal bro`)
+                    })
+                }
+
+  </script>
+
+<%- include('../layouts/footer') %> 
