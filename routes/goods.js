@@ -44,17 +44,42 @@ module.exports = function (db) {
     // Save the newly added goods
     .post(isAdmin, async function (req, res) {
       try {
+        let picture;
+        let pictureName;
+
         const { barcode, name, stock, purchasePrice, sellingPrice, unit } =
           req.body;
 
+          // if No picture
+        if (!req.files || Object.keys(req.files).length === 0) {
+          // /* Driver code to update data */
+          sql = `INSERT INTO goods("barcode", "name", "stock", "unit", "purchaseprice", "sellingprice", "picture") VALUES($1,$2,$3,$4,$5,$6,$7) returning *`;
+          pictureName = `no-picture`
+          
+          response = [
+            barcode,
+            name,
+            stock,
+            unit,
+            purchasePrice,
+            sellingPrice,
+            pictureName
+          ];
+
+          const { rows: addGoodsNoPicture } = await db.query(sql, response);
+          
+          if (addGoodsNoPicture.length > 0) {
+            req.flash(`success`, `A new goods ${name} has been added!`);
+          } else {
+            req.flash(`error`, `Error when adding ${name}!`);
+          }
+          return res.redirect("/goods");
+        }
+
         /* Driver Code for picture upload */
         // The name of the input field (i.e. "picture") is used to retrieve the uploaded file
-        let picture = req.files.picture;
-        let pictureName = `${Date.now()}-${picture.name}`;
-
-        if (!req.files || Object.keys(req.files).length === 0) {
-          pictureName = `No picture`;
-        }
+        picture = req.files.picture;
+        pictureName = `${Date.now()}-${picture.name}`;
 
         let uploadPath = path.join(
           __dirname,
@@ -68,7 +93,7 @@ module.exports = function (db) {
         // /* Driver code to add data */
         sql = `INSERT INTO goods("barcode", "name", "stock", "unit", "purchaseprice", "sellingprice", "picture") VALUES($1,$2,$3,$4,$5,$6,$7) returning *`;
 
-        const response = [
+        response = [
           barcode,
           name,
           stock,
@@ -78,7 +103,7 @@ module.exports = function (db) {
           pictureName,
         ];
 
-        const {rows: addGoods} =  await db.query(sql, response);
+        const { rows: addGoods } = await db.query(sql, response);
         await picture.mv(uploadPath);
 
         if (addGoods.length > 0) {
@@ -197,7 +222,7 @@ module.exports = function (db) {
             barcode,
           ];
 
-          const {rows: updateGoodsNoPicture} = await db.query(sql, response);
+          const { rows: updateGoodsNoPicture } = await db.query(sql, response);
 
           if (updateGoodsNoPicture.length > 0) {
             req.flash(`success`, `${name} has been updated!`);
@@ -235,9 +260,9 @@ module.exports = function (db) {
         // /* Driver code to update data */
         sql = `UPDATE goods SET "barcode" = $1, "name" = $2, "stock" = $3, "purchaseprice" = $4, "sellingprice" = $5, "unit" = $6, "picture" = $7 WHERE "barcode" = $8 returning *`;
 
-        const {rows: updateGoods} = await db.query(sql, response);
+        const { rows: updateGoods } = await db.query(sql, response);
         await picture.mv(uploadPath);
-        
+
         if (updateGoods.length > 0) {
           req.flash(`success`, `${name} has been updated!`);
         } else {

@@ -15,7 +15,7 @@ module.exports = function (db) {
           user: req.session.user,
           error: req.flash(`error`),
           success: req.flash(`success`),
-          active: `users`
+          active: `users`,
         });
       } catch (error) {
         res.json(error);
@@ -29,7 +29,7 @@ module.exports = function (db) {
       try {
         res.render("./users/add", {
           user: req.session.user,
-          active: `users/add`
+          active: `users/add`,
         });
       } catch (error) {
         res.json(error);
@@ -53,13 +53,13 @@ module.exports = function (db) {
           role,
         ]);
 
-        if (newUnit.length > 0) {
+        if (newUser.length > 0) {
           req.flash(`success`, `A new user ${name} has been added!`);
         } else {
           req.flash(`error`, `Error when adding a new unit ${name}!`);
         }
 
-        res.redirect('/users');
+        res.redirect("/users");
       } catch (error) {
         res.json(error);
       }
@@ -140,7 +140,7 @@ module.exports = function (db) {
         res.render("./users/edit", {
           user: req.session.user,
           data: getUser[0],
-          active: `users/edit`
+          active: `users/edit`,
         });
       } catch (error) {
         res.json(error);
@@ -152,9 +152,14 @@ module.exports = function (db) {
         const { email, name, role } = req.body;
         const { userid } = req.params;
         sql = `UPDATE users SET "email" = $1, "name" = $2, "role" = $3 WHERE "userid" = $4 returning *`;
-        const { rows: updateUser } = await db.query(sql, [email, name, role, parseInt(userid)]);
+        const { rows: updateUser } = await db.query(sql, [
+          email,
+          name,
+          role,
+          parseInt(userid),
+        ]);
 
-        if (newUnit.length > 0) {
+        if (updateUser.length > 0) {
           req.flash(`success`, `User ${name} has been updated!`);
         } else {
           req.flash(`error`, `Error when updating user ${name}!`);
@@ -168,8 +173,10 @@ module.exports = function (db) {
     .delete(isAdmin, async function (req, res) {
       try {
         sql = `DELETE FROM users WHERE "userid" = $1`;
-        const userid = parseInt(req.params.userid);
-        const { rows: deleteUser } = await db.query(sql, [userid]);
+        const { userid } = req.params;
+        console.log(userid);
+        const { rows: deleteUser } = await db.query(sql, [parseInt(userid)]);
+        console.log(deleteUser);
         res.json(deleteUser);
       } catch (error) {
         res.json(error);

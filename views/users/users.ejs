@@ -76,11 +76,15 @@
 
                 //Delete data
                 const deleteData = (id) => {
+                    console.log(`masukd delete`);
                     $.ajax({
                         method: 'DELETE',
                         url: `/users/data/${id}`,
                         dataType: 'json'
                     }).done(function(response) {
+                        if (response.name = "error") {
+                            console.log(response)
+                        }
                         $('#deleteModal').modal('toggle')
                         $('#usersTable').DataTable().clear().ajax.reload()
                     }).fail(function(error) {

@@ -225,29 +225,5 @@ module.exports = function (db) {
       }
     });
 
-  // // Read data invoice
-  // .get(isLoggedIn, async function (req, res) {
-  //   try {
-  //     let params = [];
-
-  //     const sortBy = req.query.columns[req.query.order[0].column].data;
-  //     const sortMode = req.query.order[0].dir;
-
-  //     fromPurchases = `SELECT purchaseitems.id, purchaseitems.invoice, purchaseitems.itemcode, goods.name, purchaseitems.quantity, purchaseitems.purchaseprice, purchaseitems.totalprice FROM purchaseitems LEFT OUTER JOIN goods ON purchaseitems.itemcode = goods.barcode;`;
-
-  //     const data = await db.query(fromPurchases);
-
-  //     const response = {
-  //       draw: Number(req.query.draw),
-  //       data: data.rows,
-  //       info: req.flash(`info`),
-  //     };
-
-  //     res.json(response);
-  //   } catch (error) {
-  //     res.json(error);
-  //   }
-  // })
-
   return router;
 };
