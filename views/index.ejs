@@ -329,7 +329,7 @@ $('document').ready(function() {
   const readStats = () => {
             $.ajax({
                         method: 'GET',
-                        url: `/main`,
+                        url: `/dashboard`,
                     }).done(function(response) {
                         $('#display-total-sales').html(response.stats.timessales)
                         $('#display-purchase').html(currencyFormatter.format(response.stats.totalpurchases))
@@ -347,7 +347,7 @@ $('document').ready(function() {
   $('#table-monthly-report').DataTable({
                     "lengthMenu": [[3, 10, 100, -1],[3, 10, 100]],
                     "processing": true,
-                    "ajax": `/main/table`,
+                    "ajax": `/dashboard/table`,
                     "serverSide": true,
                     "footerCallback": function(row, data, start, end, display) {
                       let api = this.api()
@@ -472,7 +472,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'GET',
-        url: '/main/chart',
+        url: '/dashboard/chart',
         data: query,
       })
       .done(function(response) {
@@ -520,7 +520,7 @@ const { Parser } = json2csv
 const makeCSV = new Parser
 
 $('#download-report').click(function() {
-  $.get(`/main/report`)
+  $.get(`/dashboard/report`)
   .done(function(response) {
     let report = makeCSV.parse(response.data)
     

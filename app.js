@@ -69,7 +69,7 @@ main().then((db) => {
   app.use("/purchases", purchasesRouter);
   app.use("/customers", customersRouter);
   app.use("/sales", salesRouter);
-  app.use("/main", dashboardRouter);
+  app.use("/dashboard", dashboardRouter);
   app.use("/profile", profileRouter);
 
   // catch 404 and forward to error handler
